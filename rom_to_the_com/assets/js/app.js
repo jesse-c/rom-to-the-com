@@ -24,6 +24,30 @@ import topbar from "../vendor/topbar"
 
 let Hooks = {}
 
+Hooks.Slider = {
+  mounted() {
+    this.el.addEventListener("input", e => {
+      let comPercentage = parseInt(this.el.value);
+      let romPercentage = 100 - comPercentage;
+
+      // Adjust displayed percentages for edge cases
+      let displayRom, displayCom;
+      if (comPercentage === 0) {
+          displayRom = 99;
+          displayCom = 1;
+      } else if (romPercentage === 0) {
+          displayRom = 1;
+          displayCom = 99;
+      } else {
+          displayRom = romPercentage;
+          displayCom = comPercentage;
+      }
+
+      this.pushEvent("slider-update", { displayRom: displayRom, displayCom: displayCom });
+    })
+  }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
@@ -44,30 +68,3 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-
-const slider = document.getElementById('rom-com-slider');
-const sliderValue = document.getElementById('slider-value');
-
-slider.addEventListener('input', function() {
-  let comPercentage = parseInt(this.value);
-  let romPercentage = 100 - comPercentage;
-
-  // Adjust displayed percentages for edge cases
-  let displayRom, displayCom;
-  if (comPercentage === 0) {
-      displayRom = 99;
-      displayCom = 1;
-  } else if (romPercentage === 0) {
-      displayRom = 1;
-      displayCom = 99;
-  } else {
-      displayRom = romPercentage;
-      displayCom = comPercentage;
-  }
-
-  sliderValue.textContent = `${displayRom}%/${displayCom}% (±5)`;
-
-  // Update arrow position
-  const percentage = romPercentage * 100;
-  this.style.setProperty('--thumb-position', `${percentage}%`);
-});

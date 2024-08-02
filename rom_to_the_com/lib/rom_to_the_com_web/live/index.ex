@@ -6,11 +6,20 @@ defmodule RomToTheComWeb.Live.Index do
   def mount(_params, _session, socket) do
     {:ok, all_films} = load_csv()
 
-    {:ok, filtered_films} = filter_films(all_films, 50, 50)
+    rom = 50
+    com = 50
 
-    socket = assign(socket, all_films: all_films, filtered_films: filtered_films)
+    {:ok, filtered_films} = filter_films(all_films, rom, com)
+
+    socket = assign(socket, all_films: all_films, filtered_films: filtered_films, rom: rom, com: com)
 
     {:ok, socket}
+  end
+
+  def handle_event("slider-update", %{"displayRom" => rom, "displayCom" => com}, socket) do
+    {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
+
+    {:noreply, assign(socket, filtered_films: filtered_films, rom: rom, com: com)}
   end
 
   defp load_csv do
