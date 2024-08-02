@@ -1,0 +1,28 @@
+[project]
+name = "rom-to-the-com"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Jesse Claven", email = "jesse.claven@me.com" }
+]
+dependencies = [
+    "anthropic>=0.31.2",
+    "python-dotenv>=1.0.1",
+    "more-itertools>=10.3.0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rom_to_the_com"]
