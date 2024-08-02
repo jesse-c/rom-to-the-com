@@ -31,7 +31,7 @@
               </tr>
           </thead>
           <tbody>
-              <%= for film <- @all_films do %>
+              <%= for film <- @filtered_films do %>
                 <tr>
                     <td><%= film.title %></td>
                     <td><%= film.year %></td>
