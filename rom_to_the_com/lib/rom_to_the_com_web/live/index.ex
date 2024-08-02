@@ -4,9 +4,11 @@ defmodule RomToTheComWeb.Live.Index do
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
   def mount(_params, _session, socket) do
-    {:ok, films} = load_csv()
+    {:ok, all_films} = load_csv()
 
-    socket = assign(socket, all_films: films, filtered_films: [])
+    {:ok, filtered_films} = filter_films(all_films, 50, 50)
+
+    socket = assign(socket, all_films: all_films, filtered_films: filtered_films)
 
     {:ok, socket}
   end
@@ -35,6 +37,16 @@ defmodule RomToTheComWeb.Live.Index do
       title: title,
       year: year,
       rank: %{rom: rom, com: com}
+    }
+  end
+
+  defp filter_films(films, target_rom, target_com) do
+    {
+      :ok,
+      Enum.filter(
+        films,
+        fn %{rank: %{rom: rom, com: com}} -> rom == target_rom && com == target_com end
+      )
     }
   end
 end
