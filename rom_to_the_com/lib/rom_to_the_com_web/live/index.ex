@@ -28,6 +28,8 @@ defmodule RomToTheComWeb.Live.Index do
     [rom, com] = String.split(rank, "/")
 
     {year, _rem} = Integer.parse(year)
+    {rom, _rem} = Integer.parse(rom)
+    {com, _rem} = Integer.parse(com)
 
     %{
       title: title,
