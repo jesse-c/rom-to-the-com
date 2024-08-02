@@ -15,9 +15,11 @@ defmodule RomToTheComWeb.Router do
   end
 
   scope "/", RomToTheComWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :home
+    live_session :default do
+      live("/", Live.Index)
+    end
   end
 
   # Other scopes may use custom stacks.
