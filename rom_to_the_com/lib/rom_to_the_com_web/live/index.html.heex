@@ -23,30 +23,23 @@
         </div>
 
         <table class="w-full mb-8">
-        <thead>
-            <tr>
-            <th class="text-left">Title</th>
-            <th class="text-left">Year</th>
-            <th class="text-left">Rank</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-            <td>Notting Hill</td>
-            <td>1999</td>
-            <td>70%/30%</td>
-            </tr>
-            <tr>
-            <td>10 Things I Hate About You</td>
-            <td>1999</td>
-            <td>55%/45%</td>
-            </tr>
-            <tr>
-            <td>No Hard Feelings</td>
-            <td>2023</td>
-            <td>45%/55%</td>
-            </tr>
-        </tbody>
+          <thead>
+              <tr>
+              <th class="text-left">Title</th>
+              <th class="text-left">Year</th>
+              <th class="text-left">Rank</th>
+              </tr>
+          </thead>
+          <tbody>
+              <%= for film <- @all_films do %>
+                <tr>
+                    <td><%= film.title %></td>
+                    <td><%= film.year %></td>
+                    <td><%= film.rank.rom %></td>
+                    <td><%= film.rank.com %></td>
+                </tr>
+              <% end %>
+            </tbody>
         </table>
     </div>
     </div>
