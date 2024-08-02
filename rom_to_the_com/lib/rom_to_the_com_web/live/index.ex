@@ -6,7 +6,7 @@ defmodule RomToTheComWeb.Live.Index do
   def mount(_params, _session, socket) do
     {:ok, films} = load_csv()
 
-    socket = assign(socket, films: films)
+    socket = assign(socket, all_films: films, filtered_films: [])
 
     {:ok, socket}
   end
