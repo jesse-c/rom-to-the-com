@@ -20,6 +20,8 @@ if System.get_env("PHX_SERVER") do
   config :rom_to_the_com, RomToTheComWeb.Endpoint, server: true
 end
 
+config :rom_to_the_com, RomToTheCom.Plausible, data_domain: nil
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
@@ -55,6 +57,8 @@ if config_env() == :prod do
       """
 
   port = String.to_integer(System.get_env("PORT") || "4000")
+
+  config :rom_to_the_com, RomToTheCom.Plausible, data_domain: host
 
   config :rom_to_the_com, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
