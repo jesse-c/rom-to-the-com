@@ -7,10 +7,10 @@
   </div>
 
   <div class="w-full mb-8 text-sm">
-  <div class="w-full mb-2 grid grid-cols-2 items-center">
-    <span class="text-left">99% Romantic</span>
-    <span class="text-right">99% Comedy</span>
-  </div>
+    <div class="w-full mb-2 grid grid-cols-2 items-center font-bold">
+      <span class="text-left">99% Romantic</span>
+      <span class="text-right">99% Comedy</span>
+    </div>
     <input
       type="range"
       min="0"
@@ -21,9 +21,9 @@
       id="rom-com-slider"
       phx-hook="Slider"
     />
-    <div class="text-center mt-2" id="slider-value">
+    <div class="text-center mt-2 text-sm" id="slider-value">
       <div><%= @rom %>%/<%= @com %>%</div>
-      <div class="text-sm">(±5)</div>
+      <div>(±5)</div>
     </div>
   </div>
 
