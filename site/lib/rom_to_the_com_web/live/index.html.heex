@@ -37,12 +37,18 @@
           </tr>
         </thead>
         <tbody>
-          <%= for film <- @filtered_films do %>
+          <%= if Enum.empty?(@filtered_films) do %>
             <tr>
-              <td class="w-5/6"><%= film.title %></td>
-              <td class="w-1/6"><%= film.year %></td>
-              <td class="w-1/6"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
+              <td colspan="3" class="text-center">No films found for that ranking.</td>
             </tr>
+          <% else %>
+            <%= for film <- @filtered_films do %>
+              <tr>
+                <td class="w-5/6"><%= film.title %></td>
+                <td class="w-1/6"><%= film.year %></td>
+                <td class="w-1/6"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
+              </tr>
+            <% end %>
           <% end %>
         </tbody>
       </table>
