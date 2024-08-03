@@ -27,17 +27,17 @@
       <table class="w-full mb-8">
         <thead>
             <tr>
-              <th class="text-left font-normal underline">Title</th>
-              <th class="text-left font-normal underline">Year</th>
-              <th class="text-left font-normal underline">Rank</th>
+              <th class="w-5/6 text-left font-normal underline">Title</th>
+              <th class="w-1/6 text-left font-normal underline">Year</th>
+              <th class="w-1/6 text-left font-normal underline">Rank</th>
             </tr>
         </thead>
         <tbody>
             <%= for film <- @filtered_films do %>
               <tr>
-                <td><%= film.title %></td>
-                <td><%= film.year %></td>
-                <td><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
+                <td class="w-5/6"><%= film.title %></td>
+                <td class="w-1/6"><%= film.year %></td>
+                <td class="w-1/6"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
               </tr>
             <% end %>
           </tbody>
