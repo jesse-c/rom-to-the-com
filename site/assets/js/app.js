@@ -43,7 +43,7 @@ Hooks.Slider = {
           displayCom = comPercentage;
       }
 
-      this.pushEvent("slider-update", { displayRom: displayRom, displayCom: displayCom });
+      this.pushEvent("slider-update", { displayRom: displayRom, displayCom: displayCom, pos: parseInt(this.el.value) });
     })
   }
 }

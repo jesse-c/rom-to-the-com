@@ -1,25 +1,52 @@
 defmodule RomToTheComWeb.Live.Index do
   use RomToTheComWeb, :live_view
 
+  require Logger
+
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
   def mount(_params, _session, socket) do
+    Logger.debug("Index lifecycle: :mount_started")
+
     {:ok, all_films} = load_csv()
 
     rom = 50
     com = 50
+    pos = 50
 
     {:ok, filtered_films} = filter_films(all_films, rom, com)
 
-    socket = assign(socket, all_films: all_films, filtered_films: filtered_films, rom: rom, com: com)
+    socket =
+      assign(socket,
+        all_films: all_films,
+        filtered_films: filtered_films,
+        rom: rom,
+        com: com,
+        pos: pos
+      )
+
+    Logger.debug("Index lifecycle: :mount_finished")
 
     {:ok, socket}
   end
 
-  def handle_event("slider-update", %{"displayRom" => rom, "displayCom" => com}, socket) do
+  def handle_event(
+        "slider-update",
+        %{"displayRom" => rom, "displayCom" => com, "pos" => pos},
+        socket
+      ) do
     {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
 
-    {:noreply, assign(socket, filtered_films: filtered_films, rom: rom, com: com)}
+    {
+      :noreply,
+      assign(
+        socket,
+        filtered_films: filtered_films,
+        rom: rom,
+        com: com,
+        pos: pos
+      )
+    }
   end
 
   defp load_csv do
