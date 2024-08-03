@@ -13,12 +13,14 @@ defmodule RomToTheComWeb.Live.Index do
     {:ok, filtered_films} = filter_films(all_films, rom, com)
 
     socket =
-      assign(socket,
+      assign(
+        socket,
         all_films: all_films,
         filtered_films: filtered_films,
         rom: rom,
         com: com,
-        pos: pos
+        pos: pos,
+        page_title: "Index"
       )
 
     {:ok, socket}
