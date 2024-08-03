@@ -312,3 +312,5 @@ Data domain:
 Event (action) sourcing?
 
 v1 → v2?
+
+Posters on hover?
