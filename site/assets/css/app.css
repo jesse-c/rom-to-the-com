@@ -45,15 +45,9 @@ input[type="range"]::-moz-range-thumb {
 
 .loader {
     position: relative;
-    width: 20px;
 }
 
 .loader span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     opacity: 0;
     animation: fadeInOut 2s ease-in-out infinite;
 }
@@ -63,6 +57,10 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .loader .laugh {
+    animation-delay: -0.5s;
+}
+
+.loader .star {
     animation-delay: -1s;
 }
 
