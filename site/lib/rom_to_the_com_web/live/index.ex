@@ -3,6 +3,8 @@ defmodule RomToTheComWeb.Live.Index do
 
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
+  @poster_base_url "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"
+
   def mount(_params, _session, socket) do
     {:ok, all_films} = load_csv()
 
@@ -58,7 +60,7 @@ defmodule RomToTheComWeb.Live.Index do
     end
   end
 
-  defp process_row([title, year, rank]) do
+  defp process_row([id, title, year, rank, poster]) do
     [rom, com] = String.split(rank, "/")
 
     {year, _rem} = Integer.parse(year)
@@ -66,11 +68,17 @@ defmodule RomToTheComWeb.Live.Index do
     {com, _rem} = Integer.parse(com)
 
     %{
+      id: id,
       title: title,
       year: year,
-      rank: %{rom: rom, com: com}
+      rank: %{rom: rom, com: com},
+      poster: poster_to_url(poster)
     }
   end
+
+  defp poster_to_url(poster)
+  defp poster_to_url(""), do: nil
+  defp poster_to_url(poster), do: Path.join([@poster_base_url, poster])
 
   defp filter_films(films, target_rom, target_com) do
     {
