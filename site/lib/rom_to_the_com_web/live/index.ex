@@ -3,7 +3,7 @@ defmodule RomToTheComWeb.Live.Index do
 
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
-  @poster_base_url "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"
+  @poster_base_url "https://image.tmdb.org/t/p/w500/"
 
   def mount(_params, _session, socket) do
     {:ok, all_films} = load_csv()
