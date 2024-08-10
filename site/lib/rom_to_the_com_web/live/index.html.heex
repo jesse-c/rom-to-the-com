@@ -43,7 +43,11 @@
       <% else %>
         <%= for film <- @filtered_films do %>
           <tr class="py-2">
-            <td class="w-5/6 py-2"><%= film.title %></td>
+            <%= if is_nil(film.poster) do %>
+              <td class="w-5/6 py-2"><%= film.title %></td>
+            <% else %>
+              <td class="w-5/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}><%= film.title %></td>
+            <% end %>
             <td class="w-1/6 py-2"><%= film.year %></td>
             <td class="w-1/6 py-2"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
           </tr>

@@ -73,3 +73,28 @@ input[type="range"]::-moz-range-thumb {
         opacity: 1;
     }
 }
+
+.movie-title {
+    position: relative;
+}
+
+.movie-title::after {
+    content: "";
+    display: block;
+    background-image: var(--poster-url);
+    background-size: cover;
+    position: absolute;
+    margin-left: 20px;
+    width: 200px;
+    height: 300px;
+    border: 1px solid black;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.movie-title:hover::after {
+    opacity: 1;
+    cursor: pointer;
+}
