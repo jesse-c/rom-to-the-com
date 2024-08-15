@@ -15,7 +15,10 @@ defmodule RomToTheCom.Suggestion do
     suggestion
     |> cast(attrs, [:imdb_link, :romance_percentage, :comedy_percentage])
     |> validate_required([:imdb_link, :romance_percentage, :comedy_percentage])
-    |> validate_format(:imdb_link, ~r/^https?:\/\/(?:www\.)?imdb\.com\/title\/tt\d{7,8}\/?$/)
+    |> validate_format(
+      :imdb_link,
+      ~r/^https?:\/\/(?:www\.)?imdb\.com\/title\/tt\d{7,8}\/?(?:\?.*)?$/
+    )
     |> validate_number(:romance_percentage,
       greater_than_or_equal_to: 1,
       less_than_or_equal_to: 99
@@ -37,7 +40,7 @@ defmodule RomToTheCom.Suggestion do
         changeset
       end
     else
-      :error -> changeset
+      _ -> changeset
     end
   end
 end
