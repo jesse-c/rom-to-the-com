@@ -8,6 +8,14 @@ defmodule RomToTheComWeb.Router do
     plug :put_root_layout, html: {RomToTheComWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :assign_ip_to_session
+  end
+
+  # session: %{"_csrf_token" => "5CjLB4-ZT3EVDWTV-0b91AJa", "client_ip" => "127.0.0.1"}
+  def assign_ip_to_session(conn, _opts) do
+    ip_address = conn.remote_ip |> :inet.ntoa() |> to_string()
+
+    Plug.Conn.put_session(conn, :client_ip, ip_address)
   end
 
   pipeline :api do

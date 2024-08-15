@@ -1,11 +1,14 @@
 defmodule RomToTheComWeb.Live.Index do
   use RomToTheComWeb, :live_view
 
+  alias RomToTheCom.Repo
+  alias RomToTheCom.Suggestion
+
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
   @poster_base_url "https://image.tmdb.org/t/p/w500/"
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     {:ok, all_films} = load_csv()
 
     rom = 50
@@ -22,7 +25,16 @@ defmodule RomToTheComWeb.Live.Index do
         rom: rom,
         com: com,
         pos: pos,
-        page_title: "Index"
+        page_title: "Index",
+        form:
+          to_form(
+            Ecto.Changeset.change(%Suggestion{
+              romance_percentage: rom,
+              comedy_percentage: com
+            })
+          ),
+        details_open: false,
+        client_ip: session["client_ip"]
       )
 
     {:ok, socket}
@@ -45,6 +57,66 @@ defmodule RomToTheComWeb.Live.Index do
         pos: pos
       )
     }
+  end
+
+  def handle_event("toggle_details", _params, socket) do
+    {:noreply, assign(socket, details_open: not socket.assigns.details_open)}
+  end
+
+  def handle_event("validate", params, socket) do
+    params =
+      %{
+        imdb_link: params["imdb-link"],
+        romance_percentage: params["romance-percentage"],
+        comedy_percentage: params["comedy-percentage"]
+      }
+
+    form =
+      %Suggestion{}
+      |> Suggestion.changeset(params)
+      |> to_form(action: :validate)
+
+    {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("save", params, socket) do
+    params =
+      %{
+        imdb_link: params["imdb-link"],
+        romance_percentage: params["romance-percentage"],
+        comedy_percentage: params["comedy-percentage"]
+      }
+
+    changeset =
+      %Suggestion{}
+      |> Suggestion.changeset(params)
+      |> Map.put(:action, :insert)
+
+    cond do
+      match?(
+        {:deny, _limit},
+        Hammer.check_rate("save:#{socket.assigns[:client_ip]}", 60_000, 10)
+      ) ->
+        socket =
+          socket
+          |> assign(form: to_form(changeset))
+          |> clear_flash()
+          |> put_flash(:error, "Try again later!")
+
+        {:noreply, socket}
+
+      changeset.valid? ->
+        case Repo.insert(changeset) do
+          {:ok, _suggestion} ->
+            {:noreply, put_flash(socket, :info, "Suggestion created!")}
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:noreply, assign(socket, form: to_form(changeset))}
+        end
+
+      true ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
   end
 
   defp load_csv do

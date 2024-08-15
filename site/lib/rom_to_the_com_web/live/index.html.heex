@@ -6,6 +6,28 @@
     <p>This simple website is to help you find the exact rom-com film for your <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">mood <span class="loader text-sm inline-block"><span class="star">✶</span></span></span>.</p>
   </div>
 
+  <details class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white" {if @details_open, do: [open: "true"], else: []}>
+    <summary class="font-gupter text-lg"  phx-click="toggle_details"><span>Would you like to suggest a film?</span></summary>
+    <.form for={@form} phx-change="validate" phx-submit="save" class="text-sm mt-2 space-y-2" id="suggestion-form">
+      <div class="flex items-center">
+        <label for="imdb-link" class="w-1/3">IMDB link</label>
+        <.input type="text" field={@form[:imdb_link]} name="imdb-link" id="imdb-link" class="w-2/3 rounded-sm text-black" />
+      </div>
+      <div class="flex items-center">
+        <label for="romance-percentage" class="w-1/3">Romance percentage</label>
+        <.input type="number" field={@form[:romance_percentage]} name="romance-percentage" id="romance-percentage" class="w-2/3 rounded-sm text-black" />
+      </div>
+      <div class="flex items-center">
+        <label for="comedy-percentage" class="w-1/3">Comedy percentage</label>
+        <.input type="number" field={@form[:comedy_percentage]} name="comedy-percentage" id="comedy-percentage" class="w-2/3 rounded-sm text-black" />
+      </div>
+      <.error :for={{msg, _} <- @form[:rankings_sum].errors}><%= msg %></.error>
+      <div>
+        <.button type="submit" form="suggestion-form" class="p-2 bg-brand text-white rounded-sm">Submit</.button>
+      </div>
+    </.form>
+  </details>
+
   <div class="w-full mb-8 text-sm">
     <div class="w-full mb-2 grid grid-cols-2 items-center font-bold">
       <span class="text-left">99% Romantic</span>
