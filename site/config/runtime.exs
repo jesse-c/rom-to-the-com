@@ -1,4 +1,7 @@
 import Config
+import Dotenvy
+
+source!([".env", System.get_env()])
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
@@ -21,6 +24,10 @@ if System.get_env("PHX_SERVER") do
 end
 
 config :rom_to_the_com, RomToTheCom.Plausible, data_domain: nil
+
+config :rom_to_the_com, RomToTheComWeb.Pushover,
+  pushover_api_key: env!("PUSHOVER_API_KEY", :string!),
+  pushover_user_key: env!("PUSHOVER_USER_KEY", :string!)
 
 if config_env() == :prod do
   database_url =
