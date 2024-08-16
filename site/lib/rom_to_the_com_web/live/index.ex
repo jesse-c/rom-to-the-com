@@ -108,6 +108,19 @@ defmodule RomToTheComWeb.Live.Index do
       changeset.valid? ->
         case Repo.insert(changeset) do
           {:ok, _suggestion} ->
+            Req.post!("https://api.pushover.net/1/messages.json",
+              json: %{
+                token:
+                  Application.get_env(:rom_to_the_com, RomToTheComWeb.Pushover)[:pushover_api_key],
+                user:
+                  Application.get_env(:rom_to_the_com, RomToTheComWeb.Pushover)[
+                    :pushover_user_key
+                  ],
+                message:
+                  "Suggestion created! IMDB link: #{Ecto.Changeset.get_field(changeset, :imdb_link)}, romance percentage: #{Ecto.Changeset.get_field(changeset, :romance_percentage)}%, comedy percentage: #{Ecto.Changeset.get_field(changeset, :comedy_percentage)}%"
+              }
+            )
+
             {:noreply, put_flash(socket, :info, "Suggestion created!")}
 
           {:error, %Ecto.Changeset{} = changeset} ->
