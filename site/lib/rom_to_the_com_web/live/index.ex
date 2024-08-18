@@ -63,6 +63,25 @@ defmodule RomToTheComWeb.Live.Index do
     {:noreply, assign(socket, details_open: not socket.assigns.details_open)}
   end
 
+  def handle_event("feeling_lucky", _params, socket) do
+    rom = generate_random_percentage()
+    com = 100 - rom
+    pos = rom
+
+    {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
+
+    {
+      :noreply,
+      assign(
+        socket,
+        filtered_films: filtered_films,
+        rom: rom,
+        com: com,
+        pos: pos
+      )
+    }
+  end
+
   def handle_event("validate", params, socket) do
     params =
       %{
@@ -173,5 +192,13 @@ defmodule RomToTheComWeb.Live.Index do
         fn %{rank: %{rom: rom, com: com}} -> rom == target_rom && com == target_com end
       )
     }
+  end
+
+  defp generate_random_percentage do
+    case Enum.random(1..20) do
+      1 -> 1
+      20 -> 99
+      n -> n * 5
+    end
   end
 end

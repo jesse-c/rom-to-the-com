@@ -23,14 +23,19 @@
       </div>
       <.error :for={{msg, _} <- @form[:rankings_sum].errors}><%= msg %></.error>
       <div>
-        <.button type="submit" form="suggestion-form" class="p-2 bg-brand text-white rounded-sm">Submit</.button>
+        <.button type="submit" form="suggestion-form" class="bg-brand text-white p-2 rounded-sm hover:bg-brand-dark transition-colors duration-200">Submit</.button>
       </div>
     </.form>
   </details>
 
   <div class="w-full mb-8 text-sm">
-    <div class="w-full mb-2 grid grid-cols-2 items-center font-bold">
+    <div class="w-full mb-2 grid grid-cols-3 items-center font-bold">
       <span class="text-left">99% Romantic</span>
+      <div class="text-center">
+        <button phx-click="feeling_lucky" class="font-normal bg-brand text-white p-2 rounded-sm hover:bg-brand-dark transition-colors duration-200">
+          I'm feeling lucky!
+        </button>
+      </div>
       <span class="text-right">99% Comedy</span>
     </div>
     <input
