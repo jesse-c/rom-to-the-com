@@ -6,7 +6,7 @@ defmodule RomToTheCom.Event do
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   @foreign_key_type Ecto.UUID
   schema "events" do
-    field :type, Ecto.Enum, values: [:click]
+    field :type, Ecto.Enum, values: [:click, :drag, :toggle]
     field :version, :integer
     field :properties, :map
 

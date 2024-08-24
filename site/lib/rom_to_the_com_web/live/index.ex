@@ -48,6 +48,28 @@ defmodule RomToTheComWeb.Live.Index do
       ) do
     {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
 
+    Task.async(fn ->
+      params = %{
+        type: :drag,
+        version: 1,
+        properties: %{
+          element: :slider_drag,
+          rom: rom,
+          com: com
+        }
+      }
+
+      %Event{}
+      |> Event.create_changeset(params)
+      |> case do
+        %Ecto.Changeset{valid?: true} = changeset ->
+          Repo.insert(changeset)
+
+        %Ecto.Changeset{valid?: false} = changeset ->
+          {:error, changeset}
+      end
+    end)
+
     {
       :noreply,
       assign(
