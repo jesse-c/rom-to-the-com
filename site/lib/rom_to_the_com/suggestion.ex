@@ -11,7 +11,7 @@ defmodule RomToTheCom.Suggestion do
     timestamps()
   end
 
-  def changeset(suggestion, attrs) do
+  def create_changeset(suggestion, attrs) do
     suggestion
     |> cast(attrs, [:imdb_link, :romance_percentage, :comedy_percentage])
     |> validate_required([:imdb_link, :romance_percentage, :comedy_percentage])
