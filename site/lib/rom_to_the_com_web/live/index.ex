@@ -1,6 +1,7 @@
 defmodule RomToTheComWeb.Live.Index do
   use RomToTheComWeb, :live_view
 
+  alias RomToTheCom.Event
   alias RomToTheCom.Repo
   alias RomToTheCom.Suggestion
 
@@ -70,6 +71,28 @@ defmodule RomToTheComWeb.Live.Index do
 
     {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
 
+    Task.async(fn ->
+      params = %{
+        type: :click,
+        version: 1,
+        properties: %{
+          element: :im_feeling_lucky_button,
+          rom: rom,
+          com: com
+        }
+      }
+
+      %Event{}
+      |> Event.create_changeset(params)
+      |> case do
+        %Ecto.Changeset{valid?: true} = changeset ->
+          Repo.insert(changeset)
+
+        %Ecto.Changeset{valid?: false} = changeset ->
+          {:error, changeset}
+      end
+    end)
+
     {
       :noreply,
       assign(
@@ -92,7 +115,7 @@ defmodule RomToTheComWeb.Live.Index do
 
     form =
       %Suggestion{}
-      |> Suggestion.changeset(params)
+      |> Suggestion.create_changeset(params)
       |> to_form(action: :validate)
 
     {:noreply, assign(socket, form: form)}
@@ -108,7 +131,7 @@ defmodule RomToTheComWeb.Live.Index do
 
     changeset =
       %Suggestion{}
-      |> Suggestion.changeset(params)
+      |> Suggestion.create_changeset(params)
       |> Map.put(:action, :insert)
 
     cond do
