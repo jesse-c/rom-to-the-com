@@ -15,7 +15,8 @@ defmodule RomToTheCom.Application do
       # Start a worker by calling: RomToTheCom.Worker.start_link(arg)
       # {RomToTheCom.Worker, arg},
       # Start to serve requests, typically the last entry
-      RomToTheComWeb.Endpoint
+      RomToTheComWeb.Endpoint,
+      {Task.Supervisor, name: MyTaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
