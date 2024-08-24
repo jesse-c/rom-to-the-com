@@ -48,7 +48,7 @@ defmodule RomToTheComWeb.Live.Index do
       ) do
     {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
 
-    Task.async(fn ->
+    Task.Supervisor.start_child(MyTaskSupervisor, fn ->
       params = %{
         type: :drag,
         version: 1,
@@ -93,7 +93,7 @@ defmodule RomToTheComWeb.Live.Index do
 
     {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
 
-    Task.async(fn ->
+    Task.Supervisor.start_child(MyTaskSupervisor, fn ->
       params = %{
         type: :click,
         version: 1,
