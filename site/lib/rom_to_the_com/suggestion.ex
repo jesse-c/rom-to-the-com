@@ -17,7 +17,7 @@ defmodule RomToTheCom.Suggestion do
     |> validate_required([:imdb_link, :romance_percentage, :comedy_percentage])
     |> validate_format(
       :imdb_link,
-      ~r/^https?:\/\/(?:www\.)?imdb\.com\/title\/tt\d{7,8}\/?(?:\?.*)?$/
+      ~r/^https?:\/\/(?:(?:www|m)\.)?imdb\.com\/title\/tt\d{7,8}\/?(?:\?.*)?$/
     )
     |> validate_number(:romance_percentage,
       greater_than_or_equal_to: 1,
