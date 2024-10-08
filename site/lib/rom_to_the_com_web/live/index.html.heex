@@ -8,25 +8,46 @@
 
   <details class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white" {if @details_open, do: [open: "true"], else: []}>
     <summary class="font-gupter text-lg"  phx-click="toggle_details"><span>Would you like to suggest a film?</span></summary>
-    <.form for={@form} phx-change="validate" phx-submit="save" class="text-sm mt-2 space-y-2" id="suggestion-form">
+    <.form for={@suggestion} phx-change="suggestion_validate" phx-submit="suggestion_save" class="text-sm mt-2 space-y-2" id="suggestion-form">
       <div class="flex items-center">
-        <label for="imdb-link" class="w-1/3">IMDB link</label>
-        <.input type="text" field={@form[:imdb_link]} name="imdb-link" id="imdb-link" class="w-2/3 rounded-sm text-black" />
+        <label for="imdb-link" class="w-1/3 text-sm">IMDB link</label>
+        <.input type="text" field={@suggestion[:imdb_link]} name="imdb-link" id="imdb-link" class="w-2/3 rounded-sm text-black text-sm" />
       </div>
       <div class="flex items-center">
-        <label for="romance-percentage" class="w-1/3">Romance percentage</label>
-        <.input type="number" field={@form[:romance_percentage]} name="romance-percentage" id="romance-percentage" class="w-2/3 rounded-sm text-black" />
+        <label for="romance-percentage" class="w-1/3 text-sm">Romance percentage</label>
+        <.input type="number" field={@suggestion[:romance_percentage]} name="romance-percentage" id="suggestion-romance-percentage" class="w-2/3 rounded-sm text-black text-sm" />
       </div>
       <div class="flex items-center">
-        <label for="comedy-percentage" class="w-1/3">Comedy percentage</label>
-        <.input type="number" field={@form[:comedy_percentage]} name="comedy-percentage" id="comedy-percentage" class="w-2/3 rounded-sm text-black" />
+        <label for="comedy-percentage" class="w-1/3 text-sm">Comedy percentage</label>
+        <.input type="number" field={@suggestion[:comedy_percentage]} name="comedy-percentage" id="suggestion-comedy-percentage" class="w-2/3 rounded-sm text-black text-sm" />
       </div>
-      <.error :for={{msg, _} <- @form[:rankings_sum].errors}><%= msg %></.error>
+      <.error :for={{msg, _} <- @suggestion[:rankings_sum].errors}><%= msg %></.error>
       <div>
         <.button type="submit" form="suggestion-form" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Submit</.button>
       </div>
     </.form>
   </details>
+
+  <%= if not is_nil(@edit) do %>
+    <div class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white">
+    <.form for={@edit.form} phx-change="edit_validate" phx-submit="edit_save" class="text-sm mt-2 space-y-2" id="edit-form">
+      <p class="font-gupter text-lg">You're suggesting an edit for <em><%= @edit.film.title %></em>.</p>
+      <div class="flex items-center">
+        <label for="romance-percentage" class="w-1/3 text-sm">Romance percentage</label>
+        <.input type="number" field={@edit[:form][:romance_percentage]} name="romance-percentage" id="edit-romance-percentage" class="w-2/3 rounded-sm text-black text-sm" />
+      </div>
+      <div class="flex items-center">
+        <label for="comedy-percentage" class="w-1/3 text-sm">Comedy percentage</label>
+        <.input type="number" field={@edit[:form][:comedy_percentage]} name="comedy-percentage" id="edit-comedy-percentage" class="w-2/3 rounded-sm text-black text-sm" />
+      </div>
+      <.error :for={{msg, _} <- @edit[:form][:rankings_sum].errors}><%= msg %></.error>
+      <button type="submit" form="edit-form" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Submit</button>
+    </.form>
+    <button phx-click="edit_reset"class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Reset</button>
+    <button phx-click="edit_cancel" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Cancel</button>
+    </div>
+  <% end %>
+
 
   <div class="w-full mb-8 text-sm">
     <div class="w-full mb-2 grid grid-cols-3 items-center font-bold">
@@ -57,26 +78,30 @@
   <table class="w-full mb-8 text-sm">
     <thead>
       <tr class="bg-black dark:bg-white text-white dark:text-black p-2">
-        <th class="w-5/6 text-left font-normal underline p-2">Title</th>
+        <th class="w-4/6 text-left font-normal underline p-2">Title</th>
         <th class="w-1/6 text-left font-normal underline p-2">Year</th>
         <th class="w-1/6 text-left font-normal underline p-2">Rank</th>
+        <th class="w-1/6 text-left font-normal underline p-2">Actions</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-dashed divide-black">
       <%= if Enum.empty?(@filtered_films) do %>
         <tr>
-          <td colspan="3" class="text-center py-2">No films found for that ranking.</td>
+          <td colspan="4" class="text-center py-2">No films found for that ranking.</td>
         </tr>
       <% else %>
         <%= for film <- @filtered_films do %>
           <tr class="py-2">
             <%= if is_nil(film.poster) do %>
-              <td class="w-5/6 py-2"><%= film.title %></td>
+              <td class="w-4/6 py-2"><%= film.title %></td>
             <% else %>
-              <td class="w-5/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}><%= film.title %></td>
+              <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}><%= film.title %></td>
             <% end %>
             <td class="w-1/6 py-2"><%= film.year %></td>
             <td class="w-1/6 py-2"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
+            <td class="w-1/6 py-2">
+            <button phx-click="edit_open" value={film.id} class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200">Edit</button>
+            </td>
           </tr>
         <% end %>
       <% end %>

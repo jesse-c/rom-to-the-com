@@ -1,20 +1,24 @@
 defmodule RomToTheComWeb.Live.Index do
   use RomToTheComWeb, :live_view
 
-  alias RomToTheCom.Event
   alias RomToTheCom.Repo
   alias RomToTheCom.Suggestion
+  alias RomToTheCom.Event
+  alias RomToTheCom.Edit
 
   NimbleCSV.define(MyParser, separator: ",", escape: "\"")
 
   @poster_base_url "https://image.tmdb.org/t/p/w500/"
+  @default_rom 50
+  @default_com 50
+  @default_pos 50
 
   def mount(_params, session, socket) do
     {:ok, all_films} = load_csv()
 
-    rom = 50
-    com = 50
-    pos = 50
+    rom = @default_rom
+    com = @default_com
+    pos = @default_pos
 
     {:ok, filtered_films} = filter_films(all_films, rom, com)
 
@@ -27,13 +31,14 @@ defmodule RomToTheComWeb.Live.Index do
         com: com,
         pos: pos,
         page_title: "Index",
-        form:
+        suggestion:
           to_form(
             Ecto.Changeset.change(%Suggestion{
               romance_percentage: rom,
               comedy_percentage: com
             })
           ),
+        edit: nil,
         details_open: false,
         client_ip: session["client_ip"]
       )
@@ -127,7 +132,7 @@ defmodule RomToTheComWeb.Live.Index do
     }
   end
 
-  def handle_event("validate", params, socket) do
+  def handle_event("suggestion_validate", params, socket) do
     params =
       %{
         imdb_link: params["imdb-link"],
@@ -135,15 +140,15 @@ defmodule RomToTheComWeb.Live.Index do
         comedy_percentage: params["comedy-percentage"]
       }
 
-    form =
+    suggestion =
       %Suggestion{}
       |> Suggestion.create_changeset(params)
       |> to_form(action: :validate)
 
-    {:noreply, assign(socket, form: form)}
+    {:noreply, assign(socket, suggestion: suggestion)}
   end
 
-  def handle_event("save", params, socket) do
+  def handle_event("suggestion_save", params, socket) do
     params =
       %{
         imdb_link: params["imdb-link"],
@@ -159,11 +164,11 @@ defmodule RomToTheComWeb.Live.Index do
     cond do
       match?(
         {:deny, _limit},
-        Hammer.check_rate("save:#{socket.assigns[:client_ip]}", 60_000, 10)
+        Hammer.check_rate("suggestion_save:#{socket.assigns[:client_ip]}", 60_000, 10)
       ) ->
         socket =
           socket
-          |> assign(form: to_form(changeset))
+          |> assign(suggestion: to_form(changeset))
           |> clear_flash()
           |> put_flash(:error, "Try again later!")
 
@@ -181,19 +186,172 @@ defmodule RomToTheComWeb.Live.Index do
                     :pushover_user_key
                   ],
                 message:
-                  "Suggestion created! IMDB link: #{Ecto.Changeset.get_field(changeset, :imdb_link)}, romance percentage: #{Ecto.Changeset.get_field(changeset, :romance_percentage)}%, comedy percentage: #{Ecto.Changeset.get_field(changeset, :comedy_percentage)}%"
+                  "Suggestion submitted! IMDB link: #{Ecto.Changeset.get_field(changeset, :imdb_link)}, romance percentage: #{Ecto.Changeset.get_field(changeset, :romance_percentage)}%, comedy percentage: #{Ecto.Changeset.get_field(changeset, :comedy_percentage)}%"
               }
             )
 
-            {:noreply, put_flash(socket, :info, "Suggestion created!")}
+            socket =
+              socket
+              |> put_flash(:info, "Suggestion submitted!")
+              |> assign(
+                suggestion:
+                  to_form(
+                    Ecto.Changeset.change(%Suggestion{
+                      romance_percentage: @default_rom,
+                      comedy_percentage: @default_com
+                    })
+                  ),
+                details_open: false
+              )
+
+            {:noreply, socket}
 
           {:error, %Ecto.Changeset{} = changeset} ->
-            {:noreply, assign(socket, form: to_form(changeset))}
+            {:noreply, assign(socket, suggestion: to_form(changeset))}
         end
 
       true ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+        {:noreply, assign(socket, suggestion: to_form(changeset))}
     end
+  end
+
+  def handle_event("edit_open", params, socket) do
+    id = params["value"]
+
+    if String.trim(id) == "", do: raise("received an empty film id")
+
+    film = Enum.find(socket.assigns.all_films, &(&1.id == id))
+
+    form =
+      to_form(
+        Ecto.Changeset.change(%Edit{
+          romance_percentage: film.rank.rom,
+          comedy_percentage: film.rank.com
+        })
+      )
+
+    {
+      :noreply,
+      assign(
+        socket,
+        edit: %{
+          film: film,
+          form: form
+        }
+      )
+    }
+  end
+
+  def handle_event("edit_save", params, socket) do
+    film = socket.assigns.edit.film
+
+    params =
+      %{
+        film_id: film.id,
+        romance_percentage: params["romance-percentage"],
+        comedy_percentage: params["comedy-percentage"]
+      }
+
+    changeset =
+      %Edit{}
+      |> Edit.create_changeset(params)
+      |> Map.put(:action, :insert)
+
+    cond do
+      match?(
+        {:deny, _limit},
+        Hammer.check_rate("edit_save:#{socket.assigns[:client_ip]}", 60_000, 10)
+      ) ->
+        socket =
+          socket
+          |> assign(socket, edit: %{film: film, form: to_form(changeset)})
+          |> clear_flash()
+          |> put_flash(:error, "Try again later!")
+
+        {:noreply, socket}
+
+      changeset.valid? ->
+        case Repo.insert(changeset) do
+          {:ok, _edit} ->
+            Req.post!("https://api.pushover.net/1/messages.json",
+              json: %{
+                token:
+                  Application.get_env(:rom_to_the_com, RomToTheComWeb.Pushover)[:pushover_api_key],
+                user:
+                  Application.get_env(:rom_to_the_com, RomToTheComWeb.Pushover)[
+                    :pushover_user_key
+                  ],
+                message:
+                  "Edit submitted! Title: #{socket.assigns.edit.film.title}, romance percentage: #{socket.assigns.edit.film.rank.rom} → #{Ecto.Changeset.get_field(changeset, :romance_percentage)}%, comedy percentage: #{socket.assigns.edit.film.rank.com} → #{Ecto.Changeset.get_field(changeset, :comedy_percentage)}%"
+              }
+            )
+
+            socket =
+              socket
+              |> put_flash(:info, "Edit submitted!")
+              |> assign(edit: nil)
+
+            {:noreply, socket}
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:noreply, assign(socket, edit: %{film: film, form: to_form(changeset)})}
+        end
+
+      true ->
+        {:noreply, assign(socket, edit: %{film: film, form: to_form(changeset)})}
+    end
+  end
+
+  def handle_event("edit_validate", params, socket) do
+    params =
+      %{
+        romance_percentage: params["romance-percentage"],
+        comedy_percentage: params["comedy-percentage"]
+      }
+
+    form =
+      %Edit{}
+      |> Edit.create_changeset(params)
+      |> to_form(action: :validate)
+
+    {:noreply,
+     assign(socket,
+       edit: %{
+         film: socket.assigns.edit.film,
+         form: form
+       }
+     )}
+  end
+
+  def handle_event("edit_reset", _params, socket) do
+    form =
+      to_form(
+        Ecto.Changeset.change(%Edit{
+          romance_percentage: socket.assigns.edit.film.rank.rom,
+          comedy_percentage: socket.assigns.edit.film.rank.com
+        })
+      )
+
+    {
+      :noreply,
+      assign(
+        socket,
+        edit: %{
+          film: socket.assigns.edit.film,
+          form: form
+        }
+      )
+    }
+  end
+
+  def handle_event("edit_cancel", _params, socket) do
+    {
+      :noreply,
+      assign(
+        socket,
+        edit: nil
+      )
+    }
   end
 
   defp load_csv do
