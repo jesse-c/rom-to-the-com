@@ -156,6 +156,27 @@
     </div>
   </div>
 
+  <div class="w-full mb-4">
+    <form phx-change="search" class="flex items-center">
+      <div class="w-full">
+        <.input
+          type="text"
+          name="search"
+          value={@search}
+          placeholder="Search films..."
+          class="rounded-sm text-black text-sm"
+          autocomplete="off"
+          list="film-titles"
+        />
+      </div>
+      <datalist id="film-titles">
+        <%= for film <- @all_films do %>
+          <option value={film.title} />
+        <% end %>
+      </datalist>
+    </form>
+  </div>
+
   <table class="w-full mb-8 text-sm">
     <thead>
       <tr class="bg-black dark:bg-white text-white dark:text-black p-2">

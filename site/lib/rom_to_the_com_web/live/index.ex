@@ -20,7 +20,9 @@ defmodule RomToTheComWeb.Live.Index do
     com = @default_com
     pos = @default_pos
 
-    {:ok, filtered_films} = filter_films(all_films, rom, com)
+    search = ""
+
+    {:ok, filtered_films} = filter_films(all_films, rom, com, search)
 
     socket =
       assign(
@@ -30,6 +32,7 @@ defmodule RomToTheComWeb.Live.Index do
         rom: rom,
         com: com,
         pos: pos,
+        search: search,
         page_title: "Index",
         suggestion:
           to_form(
@@ -51,7 +54,8 @@ defmodule RomToTheComWeb.Live.Index do
         %{"displayRom" => rom, "displayCom" => com, "pos" => pos},
         socket
       ) do
-    {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
+    {:ok, filtered_films} =
+      filter_films(socket.assigns.all_films, rom, com, socket.assigns.search)
 
     Task.Supervisor.start_child(MyTaskSupervisor, fn ->
       params = %{
@@ -96,7 +100,8 @@ defmodule RomToTheComWeb.Live.Index do
     com = 100 - rom
     pos = rom
 
-    {:ok, filtered_films} = filter_films(socket.assigns.all_films, rom, com)
+    {:ok, filtered_films} =
+      filter_films(socket.assigns.all_films, rom, com, socket.assigns.search)
 
     Task.Supervisor.start_child(MyTaskSupervisor, fn ->
       params = %{
@@ -354,6 +359,13 @@ defmodule RomToTheComWeb.Live.Index do
     }
   end
 
+  def handle_event("search", %{"search" => search}, socket) do
+    {:ok, filtered_films} =
+      filter_films(socket.assigns.all_films, socket.assigns.rom, socket.assigns.com, search)
+
+    {:noreply, assign(socket, filtered_films: filtered_films, search: search)}
+  end
+
   defp load_csv do
     path = Application.app_dir(:rom_to_the_com, "priv/films.csv")
 
@@ -387,13 +399,25 @@ defmodule RomToTheComWeb.Live.Index do
   defp poster_to_url(""), do: nil
   defp poster_to_url(poster), do: Path.join([@poster_base_url, poster])
 
-  defp filter_films(films, target_rom, target_com) do
+  defp filter_films(films, target_rom, target_com, search)
+
+  defp filter_films(films, target_rom, target_com, "") do
     {
       :ok,
-      Enum.filter(
-        films,
-        fn %{rank: %{rom: rom, com: com}} -> rom == target_rom && com == target_com end
-      )
+      Enum.filter(films, fn %{rank: %{rom: rom, com: com}} ->
+        rom == target_rom && com == target_com
+      end)
+    }
+  end
+
+  defp filter_films(films, _target_rom, _target_com, search) do
+    {
+      :ok,
+      Enum.filter(films, fn %{title: title} ->
+        title
+        |> String.downcase()
+        |> String.contains?(String.downcase(search))
+      end)
     }
   end
 
