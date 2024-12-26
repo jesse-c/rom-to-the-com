@@ -1,4 +1,5 @@
 defmodule RomToTheComWeb.Live.Index do
+  @moduledoc false
   use RomToTheComWeb, :live_view
 
   alias RomToTheCom.Repo
