@@ -2,58 +2,139 @@
   <h1 class="text-3xl font-bold text-center mb-8 font-gupter">Rom-to-the-Com</h1>
 
   <div class="mb-8 text-lg font-gupter bg-brand p-2 rounded-sm border border-black dark:border-white">
-    <p class="mb-8">How much rom-to-your-com do you want? Sometimes we want to mostly <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">cry <span class="loader text-sm inline-block"><span class="heart">♥</span></span></span> and occasionally <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">laugh <span class="loader text-sm inline-block"><span class="laugh">☺</span></span></span>, or, mostly laugh and occasionally cry.</p>
-    <p>This simple website is to help you find the exact rom-com film for your <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">mood <span class="loader text-sm inline-block"><span class="star">✶</span></span></span>.</p>
+    <p class="mb-8">
+      How much rom-to-your-com do you want? Sometimes we want to mostly
+      <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">
+        cry <span class="loader text-sm inline-block"><span class="heart">♥</span></span>
+      </span>
+      and occasionally <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">laugh <span class="loader text-sm inline-block"><span class="laugh">☺</span></span></span>, or, mostly laugh and occasionally cry.
+    </p>
+    <p>
+      This simple website is to help you find the exact rom-com film for your <span class="font-inter text-sm inline-block border border-black dark:border-white px-1 mx-0.5 rounded-sm">mood <span class="loader text-sm inline-block"><span class="star">✶</span></span></span>.
+    </p>
   </div>
 
-  <details class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white" {if @details_open, do: [open: "true"], else: []}>
-    <summary class="font-gupter text-lg"  phx-click="toggle_details"><span>Would you like to suggest a film?</span></summary>
-    <.form for={@suggestion} phx-change="suggestion_validate" phx-submit="suggestion_save" class="text-sm mt-2 space-y-2" id="suggestion-form">
+  <details
+    class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white"
+    {if @details_open, do: [open: "true"], else: []}
+  >
+    <summary class="font-gupter text-lg" phx-click="toggle_details">
+      <span>Would you like to suggest a film?</span>
+    </summary>
+    <.form
+      for={@suggestion}
+      phx-change="suggestion_validate"
+      phx-submit="suggestion_save"
+      class="text-sm mt-2 space-y-2"
+      id="suggestion-form"
+    >
       <div class="flex items-center">
         <label for="imdb-link" class="w-1/3 text-sm">IMDB link</label>
-        <.input type="text" field={@suggestion[:imdb_link]} name="imdb-link" id="imdb-link" class="w-2/3 rounded-sm text-black text-sm" />
+        <.input
+          type="text"
+          field={@suggestion[:imdb_link]}
+          name="imdb-link"
+          id="imdb-link"
+          class="w-2/3 rounded-sm text-black text-sm"
+        />
       </div>
       <div class="flex items-center">
         <label for="romance-percentage" class="w-1/3 text-sm">Romance percentage</label>
-        <.input type="number" field={@suggestion[:romance_percentage]} name="romance-percentage" id="suggestion-romance-percentage" class="w-2/3 rounded-sm text-black text-sm" />
+        <.input
+          type="number"
+          field={@suggestion[:romance_percentage]}
+          name="romance-percentage"
+          id="suggestion-romance-percentage"
+          class="w-2/3 rounded-sm text-black text-sm"
+        />
       </div>
       <div class="flex items-center">
         <label for="comedy-percentage" class="w-1/3 text-sm">Comedy percentage</label>
-        <.input type="number" field={@suggestion[:comedy_percentage]} name="comedy-percentage" id="suggestion-comedy-percentage" class="w-2/3 rounded-sm text-black text-sm" />
+        <.input
+          type="number"
+          field={@suggestion[:comedy_percentage]}
+          name="comedy-percentage"
+          id="suggestion-comedy-percentage"
+          class="w-2/3 rounded-sm text-black text-sm"
+        />
       </div>
       <.error :for={{msg, _} <- @suggestion[:rankings_sum].errors}><%= msg %></.error>
       <div>
-        <.button type="submit" form="suggestion-form" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Submit</.button>
+        <.button
+          type="submit"
+          form="suggestion-form"
+          class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm"
+        >
+          Submit
+        </.button>
       </div>
     </.form>
   </details>
 
   <%= if not is_nil(@edit) do %>
     <div class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white">
-    <.form for={@edit.form} phx-change="edit_validate" phx-submit="edit_save" class="text-sm mt-2 space-y-2" id="edit-form">
-      <p class="font-gupter text-lg">You're suggesting an edit for <em><%= @edit.film.title %></em>.</p>
-      <div class="flex items-center">
-        <label for="romance-percentage" class="w-1/3 text-sm">Romance percentage</label>
-        <.input type="number" field={@edit[:form][:romance_percentage]} name="romance-percentage" id="edit-romance-percentage" class="w-2/3 rounded-sm text-black text-sm" />
-      </div>
-      <div class="flex items-center">
-        <label for="comedy-percentage" class="w-1/3 text-sm">Comedy percentage</label>
-        <.input type="number" field={@edit[:form][:comedy_percentage]} name="comedy-percentage" id="edit-comedy-percentage" class="w-2/3 rounded-sm text-black text-sm" />
-      </div>
-      <.error :for={{msg, _} <- @edit[:form][:rankings_sum].errors}><%= msg %></.error>
-      <button type="submit" form="edit-form" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Submit</button>
-    </.form>
-    <button phx-click="edit_reset"class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Reset</button>
-    <button phx-click="edit_cancel" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm">Cancel</button>
+      <.form
+        for={@edit.form}
+        phx-change="edit_validate"
+        phx-submit="edit_save"
+        class="text-sm mt-2 space-y-2"
+        id="edit-form"
+      >
+        <p class="font-gupter text-lg">
+          You're suggesting an edit for <em><%= @edit.film.title %></em>.
+        </p>
+        <div class="flex items-center">
+          <label for="romance-percentage" class="w-1/3 text-sm">Romance percentage</label>
+          <.input
+            type="number"
+            field={@edit[:form][:romance_percentage]}
+            name="romance-percentage"
+            id="edit-romance-percentage"
+            class="w-2/3 rounded-sm text-black text-sm"
+          />
+        </div>
+        <div class="flex items-center">
+          <label for="comedy-percentage" class="w-1/3 text-sm">Comedy percentage</label>
+          <.input
+            type="number"
+            field={@edit[:form][:comedy_percentage]}
+            name="comedy-percentage"
+            id="edit-comedy-percentage"
+            class="w-2/3 rounded-sm text-black text-sm"
+          />
+        </div>
+        <.error :for={{msg, _} <- @edit[:form][:rankings_sum].errors}><%= msg %></.error>
+        <button
+          type="submit"
+          form="edit-form"
+          class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm"
+        >
+          Submit
+        </button>
+      </.form>
+      <button
+        phx-click="edit_reset"
+        class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm"
+      >
+        Reset
+      </button>
+      <button
+        phx-click="edit_cancel"
+        class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200 text-sm"
+      >
+        Cancel
+      </button>
     </div>
   <% end %>
-
 
   <div class="w-full mb-8 text-sm">
     <div class="w-full mb-2 grid grid-cols-3 items-center font-bold">
       <span class="text-left">99% Romantic</span>
       <div class="text-center">
-        <button phx-click="feeling_lucky" class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200">
+        <button
+          phx-click="feeling_lucky"
+          class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
+        >
           I'm feeling lucky!
         </button>
       </div>
@@ -95,12 +176,20 @@
             <%= if is_nil(film.poster) do %>
               <td class="w-4/6 py-2"><%= film.title %></td>
             <% else %>
-              <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}><%= film.title %></td>
+              <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}>
+                <%= film.title %>
+              </td>
             <% end %>
             <td class="w-1/6 py-2"><%= film.year %></td>
             <td class="w-1/6 py-2"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
             <td class="w-1/6 py-2">
-            <button phx-click="edit_open" value={film.id} class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200">Edit</button>
+              <button
+                phx-click="edit_open"
+                value={film.id}
+                class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
+              >
+                Edit
+              </button>
             </td>
           </tr>
         <% end %>
@@ -112,22 +201,33 @@
     <hr class="mb-8 border-black dark:border-white" />
     <div class="text-sm space-y-2">
       <h2 class="font-bold">Colophon</h2>
-      <p>The idea for this came about during a road-trip with some friends. We hope you like it.</p>
-      <p class="text-right font-gupter text-base"><span class="text-xs">♡</span> Becca, Caroline, <a href="https://www.j-e-s-s-e.com" target="_blank" class="text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline">Jesse</a>, & Kenya</p>
+      <p>
+        The idea for this came about during a road-trip with some friends. We hope you like it.
+      </p>
+      <p class="text-right font-gupter text-base">
+        <span class="text-xs">♡</span>
+        Becca, Caroline, <a
+          href="https://www.j-e-s-s-e.com"
+          target="_blank"
+          class="text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline"
+        >Jesse</a>, & Kenya
+      </p>
       <h2 class="font-bold">FAQ</h2>
       <h3 class="underline">How was this made?</h3>
       <h4 class="italic">Data</h4>
       <ol class="list-decimal list-inside space-y-2">
-        <li> Exported several public rom-com lists from IMDB</li>
-        <li> Transformed them</li>
-        <li> Asked an LLM (Claude) to rank each of them</li>
+        <li>Exported several public rom-com lists from IMDB</li>
+        <li>Transformed them</li>
+        <li>Asked an LLM (Claude) to rank each of them</li>
       </ol>
       <h4 class="italic">Site</h4>
       <p>Used Elixir with Phoenix, and LiveView.</p>
       <h4 class="italic">Design</h4>
       <p>Just whipped it up.</p>
       <h3 class="underline">What's next?</h3>
-      <p>We have several ideas, and are opening to hearing more! We'd like to keep the data "fresh" and to allow people to submit their own rankings, and submit new films.</p>
+      <p>
+        We have several ideas, and are opening to hearing more! We'd like to keep the data "fresh" and to allow people to submit their own rankings, and submit new films.
+      </p>
     </div>
   </footer>
 </div>
