@@ -1,3 +1,14 @@
+# Rom-to-the-Com
+
+Ever unsure about how much romance or comedy you'd like in your rom-com? Worry no more!
+
+Read the motivation on my blog: [v1 release of Rom-to-the-Com](https://j-e-s-s-e.com/blog/v1-release-of-rom-to-the-com).
+
+---
+
+> [!IMPORTANT]
+> These are some miscellaneous notes I wrote about what I was considering for pre-v1. I've kept them here as a simple illustrative example of that point-in-time thinking for a side-project.
+
 # Plan
 
 What percentage of rom-to-the-com do you want? 99% Rom, 1% Com to 1% Rom, 99% Com.
