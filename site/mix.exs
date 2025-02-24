@@ -60,7 +60,7 @@ defmodule RomToTheCom.MixProject do
       {:nimble_csv, "~> 1.1"},
       {:hammer, "~> 6.0"},
       {:req, "~> 0.5.0"},
-      {:dotenvy, "~> 0.8.0"},
+      {:dotenvy, "~> 1.0.1"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
