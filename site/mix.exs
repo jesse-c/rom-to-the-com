@@ -58,7 +58,7 @@ defmodule RomToTheCom.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:nimble_csv, "~> 1.1"},
-      {:hammer, "~> 6.0"},
+      {:hammer, "~> 7.0"},
       {:req, "~> 0.5.0"},
       {:dotenvy, "~> 1.1.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
