@@ -17,7 +17,7 @@ defmodule RomToTheComWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import RomToTheComWeb.Gettext
+  use Gettext, backend: RomToTheComWeb.Gettext
 
   @doc """
   Renders a modal.

@@ -43,7 +43,7 @@ defmodule RomToTheComWeb do
         layouts: [html: RomToTheComWeb.Layouts]
 
       import Plug.Conn
-      import RomToTheComWeb.Gettext
+      use Gettext, backend: RomToTheComWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -85,7 +85,7 @@ defmodule RomToTheComWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import RomToTheComWeb.CoreComponents
-      import RomToTheComWeb.Gettext
+      use Gettext, backend: RomToTheComWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
