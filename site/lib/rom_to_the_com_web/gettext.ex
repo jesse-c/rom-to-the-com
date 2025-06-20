@@ -20,5 +20,5 @@ defmodule RomToTheComWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :rom_to_the_com
+  use Gettext.Backend, otp_app: :rom_to_the_com
 end
