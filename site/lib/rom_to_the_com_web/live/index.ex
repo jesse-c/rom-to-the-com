@@ -170,7 +170,11 @@ defmodule RomToTheComWeb.Live.Index do
     cond do
       match?(
         {:deny, _limit},
-        Hammer.check_rate("suggestion_save:#{socket.assigns[:client_ip]}", 60_000, 10)
+        RomToTheCom.RateLimit.hit(
+          "suggestion_save:#{socket.assigns[:client_ip]}",
+          :timer.minutes(10),
+          10
+        )
       ) ->
         socket =
           socket
@@ -266,7 +270,11 @@ defmodule RomToTheComWeb.Live.Index do
     cond do
       match?(
         {:deny, _limit},
-        Hammer.check_rate("edit_save:#{socket.assigns[:client_ip]}", 60_000, 10)
+        RomToTheCom.RateLimit.hit(
+          "edit_save:#{socket.assigns[:client_ip]}",
+          :timer.minutes(10),
+          10
+        )
       ) ->
         socket =
           socket

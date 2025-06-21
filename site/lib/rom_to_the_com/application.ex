@@ -16,7 +16,8 @@ defmodule RomToTheCom.Application do
       # {RomToTheCom.Worker, arg},
       # Start to serve requests, typically the last entry
       RomToTheComWeb.Endpoint,
-      {Task.Supervisor, name: MyTaskSupervisor}
+      {Task.Supervisor, name: MyTaskSupervisor},
+      {RomToTheCom.RateLimit, [clean_period: :timer.minutes(10)]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
