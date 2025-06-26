@@ -58,7 +58,7 @@
           class="w-2/3 rounded-sm text-black text-sm"
         />
       </div>
-      <.error :for={{msg, _} <- @suggestion[:rankings_sum].errors}><%= msg %></.error>
+      <.error :for={{msg, _} <- @suggestion[:rankings_sum].errors}>{msg}</.error>
       <div>
         <.button
           type="submit"
@@ -103,7 +103,7 @@
             class="w-2/3 rounded-sm text-black text-sm"
           />
         </div>
-        <.error :for={{msg, _} <- @edit[:form][:rankings_sum].errors}><%= msg %></.error>
+        <.error :for={{msg, _} <- @edit[:form][:rankings_sum].errors}>{msg}</.error>
         <button
           type="submit"
           form="edit-form"
@@ -151,7 +151,7 @@
       phx-hook="Slider"
     />
     <div class="text-center mt-2 text-sm" id="slider-value">
-      <div><%= @rom %>%/<%= @com %>%</div>
+      <div>{@rom}%/{@com}%</div>
       <div>(±5)</div>
     </div>
   </div>
@@ -195,14 +195,14 @@
         <%= for film <- @filtered_films do %>
           <tr class="py-2">
             <%= if is_nil(film.poster) do %>
-              <td class="w-4/6 py-2"><%= film.title %></td>
+              <td class="w-4/6 py-2">{film.title}</td>
             <% else %>
               <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}>
-                <%= film.title %>
+                {film.title}
               </td>
             <% end %>
-            <td class="w-1/6 py-2"><%= film.year %></td>
-            <td class="w-1/6 py-2"><%= film.rank.rom %>%/<%= film.rank.com %>%</td>
+            <td class="w-1/6 py-2">{film.year}</td>
+            <td class="w-1/6 py-2">{film.rank.rom}%/{film.rank.com}%</td>
             <td class="w-1/6 py-2">
               <button
                 phx-click="edit_open"
