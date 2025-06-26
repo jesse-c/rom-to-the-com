@@ -19,20 +19,18 @@ defaults:
 jobs:
   setup:
     runs-on: ubuntu-24.04
-    name: Setup (Elixir ${{matrix.elixir}} / OTP ${{matrix.otp}})
-    strategy:
-      matrix:
-        otp: ["27.2"]
-        elixir: ["1.18.0"]
+    name: Setup
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+          install-hex: true
+          install-rebar: true
+          version-type: strict
+          version-file: site/.tool-versions
 
       # Define how to cache deps. Restores existing cache if present.
       - name: Cache deps
@@ -68,21 +66,19 @@ jobs:
 
   build:
     runs-on: ubuntu-24.04
-    name: Build (Elixir ${{matrix.elixir}} / OTP ${{matrix.otp}})
+    name: Build
     needs: setup
-    strategy:
-      matrix:
-        otp: ["27.2"]
-        elixir: ["1.18.0"]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+          install-hex: true
+          install-rebar: true
+          version-type: strict
+          version-file: site/.tool-versions
 
       # Define how to cache deps. Restores existing cache if present.
       - name: Cache deps
@@ -121,21 +117,19 @@ jobs:
 
   lint:
     runs-on: ubuntu-24.04
-    name: Lint (Elixir ${{matrix.elixir}} / OTP ${{matrix.otp}})
+    name: Lint
     needs: build
-    strategy:
-      matrix:
-        otp: ["27.2"]
-        elixir: ["1.18.0"]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+          install-hex: true
+          install-rebar: true
+          version-type: strict
+          version-file: site/.tool-versions
 
       # Define how to cache deps. Restores existing cache if present.
       - name: Cache deps
@@ -183,21 +177,19 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     if: false
-    name: Test (Elixir ${{matrix.elixir}} / OTP ${{matrix.otp}})
+    name: Test
     needs: build
-    strategy:
-      matrix:
-        otp: ["27.2"]
-        elixir: ["1.18.0"]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+          install-hex: true
+          install-rebar: true
+          version-type: strict
+          version-file: site/.tool-versions
 
       # Define how to cache deps. Restores existing cache if present.
       - name: Cache deps
