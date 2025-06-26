@@ -6,7 +6,7 @@
     <meta name="csrf-token" content={get_csrf_token()} />
     <link rel="icon" sizes="any" type="image/x-icon" href="/favicon.ico" />
     <.live_title prefix="Rom-to-the-Com · ">
-      <%= assigns[:page_title] %>
+      {assigns[:page_title]}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
@@ -19,6 +19,6 @@
     </script>
   </head>
   <body class="bg-white dark:bg-black text-black dark:text-white font-inter">
-    <%= @inner_content %>
+    {@inner_content}
   </body>
 </html>
