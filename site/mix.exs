@@ -10,7 +10,8 @@ defmodule RomToTheCom.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      compilers: [:phoenix_live_view] ++ Mix.compilers()
     ]
   end
 
@@ -61,7 +62,8 @@ defmodule RomToTheCom.MixProject do
       {:hammer, "~> 7.0"},
       {:req, "~> 0.5.0"},
       {:dotenvy, "~> 1.1.0"},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:lazy_html, "~> 0.1", runtime: Mix.env() == :dev}
     ]
   end
 
