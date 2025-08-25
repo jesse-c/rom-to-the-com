@@ -16,55 +16,62 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html"
+import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import topbar from "../vendor/topbar"
+import { Socket } from "phoenix";
+import { LiveSocket } from "phoenix_live_view";
+import topbar from "../vendor/topbar";
+import { hooks as colocatedHooks } from "phoenix-colocated/rom_to_the_com";
 
-let Hooks = {}
+let Hooks = {};
 
 Hooks.Slider = {
   mounted() {
-    this.el.addEventListener("input", e => {
+    this.el.addEventListener("input", (e) => {
       let comPercentage = parseInt(this.el.value);
       let romPercentage = 100 - comPercentage;
 
       // Adjust displayed percentages for edge cases
       let displayRom, displayCom;
       if (comPercentage === 0) {
-          displayRom = 99;
-          displayCom = 1;
+        displayRom = 99;
+        displayCom = 1;
       } else if (romPercentage === 0) {
-          displayRom = 1;
-          displayCom = 99;
+        displayRom = 1;
+        displayCom = 99;
       } else {
-          displayRom = romPercentage;
-          displayCom = comPercentage;
+        displayRom = romPercentage;
+        displayCom = comPercentage;
       }
 
-      this.pushEvent("slider-update", { displayRom: displayRom, displayCom: displayCom, pos: parseInt(this.el.value) });
-    })
-  }
-}
+      this.pushEvent("slider-update", {
+        displayRom: displayRom,
+        displayCom: displayCom,
+        pos: parseInt(this.el.value),
+      });
+    });
+  },
+};
 
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+let csrfToken = document
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken},
-  hooks: Hooks,
-})
+  params: { _csrf_token: csrfToken },
+  hooks: { ...Hooks, ...colocatedHooks },
+});
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
+window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
+window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
-liveSocket.connect()
+liveSocket.connect();
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
+window.liveSocket = liveSocket;

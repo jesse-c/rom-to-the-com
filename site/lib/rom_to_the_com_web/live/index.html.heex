@@ -192,28 +192,26 @@
           <td colspan="4" class="text-center py-2">No films found for that ranking.</td>
         </tr>
       <% else %>
-        <%= for film <- @filtered_films do %>
-          <tr class="py-2">
-            <%= if is_nil(film.poster) do %>
-              <td class="w-4/6 py-2">{film.title}</td>
-            <% else %>
-              <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}>
-                {film.title}
-              </td>
-            <% end %>
-            <td class="w-1/6 py-2">{film.year}</td>
-            <td class="w-1/6 py-2">{film.rank.rom}%/{film.rank.com}%</td>
-            <td class="w-1/6 py-2">
-              <button
-                phx-click="edit_open"
-                phx-value-id={film.id}
-                class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
-              >
-                Edit
-              </button>
+        <tr :for={film <- @filtered_films} :key={film.id} class="py-2">
+          <%= if is_nil(film.poster) do %>
+            <td class="w-4/6 py-2">{film.title}</td>
+          <% else %>
+            <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}>
+              {film.title}
             </td>
-          </tr>
-        <% end %>
+          <% end %>
+          <td class="w-1/6 py-2">{film.year}</td>
+          <td class="w-1/6 py-2">{film.rank.rom}%/{film.rank.com}%</td>
+          <td class="w-1/6 py-2">
+            <button
+              phx-click="edit_open"
+              phx-value-id={film.id}
+              class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
+            >
+              Edit
+            </button>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>
