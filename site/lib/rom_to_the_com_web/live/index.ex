@@ -226,7 +226,7 @@ defmodule RomToTheComWeb.Live.Index do
   end
 
   def handle_event("edit_open", params, socket) do
-    id = params["value"]
+    id = params["id"]
 
     if String.trim(id) == "", do: raise("received an empty film id")
 
