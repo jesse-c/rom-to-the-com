@@ -32,37 +32,29 @@ jobs:
           version-type: strict
           version-file: site/.tool-versions
 
-      # Define how to cache deps. Restores existing cache if present.
+      - name: Restore deps
+        uses: actions/cache/restore@v4
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: site/deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+
+      - name: Install dependencies
+        run: mix deps.get
+
       - name: Cache deps
         id: cache-deps
         uses: actions/cache@v4
         env:
           cache-name: cache-elixir-deps
         with:
-          path: deps
+          path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
-
-      # Define how to cache the `_build` directory. After the first run,
-      # this speeds up tests runs a lot. This includes not re-compiling our
-      # project's downloaded deps every run.
-      - name: Cache compiled build
-        id: cache-build
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-compiled-build
-        with:
-          path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-mix-
-
-      # Download project dependencies. If unchanged, uses
-      # the cached version.
-      - name: Install dependencies
-        run: mix deps.get
 
   build:
     runs-on: ubuntu-24.04
@@ -80,45 +72,39 @@ jobs:
           version-type: strict
           version-file: site/.tool-versions
 
-      # Define how to cache deps. Restores existing cache if present.
-      - name: Cache deps
-        id: cache-deps
-        uses: actions/cache@v4
+      - name: Restore deps
+        uses: actions/cache/restore@v4
         env:
           cache-name: cache-elixir-deps
         with:
-          path: deps
+          path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
 
-      # Define how to cache the `_build` directory. After the first run,
-      # this speeds up tests runs a lot. This includes not re-compiling our
-      # project's downloaded deps every run.
-      - name: Cache compiled build
-        id: cache-build
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-compiled-build
-        with:
-          path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-mix-
-
-      # Download project dependencies. If unchanged, uses
-      # the cached version.
       - name: Install dependencies
         run: mix deps.get
 
       - name: Compiles without warnings
         run: mix compile --warnings-as-errors
 
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-compiled-build
+        with:
+          path: site/_build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-${{ hashFiles('site/lib/**/*.ex') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
+            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-
+
   lint:
     runs-on: ubuntu-24.04
     name: Lint
-    needs: build
+    needs: setup
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -131,37 +117,30 @@ jobs:
           version-type: strict
           version-file: site/.tool-versions
 
-      # Define how to cache deps. Restores existing cache if present.
-      - name: Cache deps
-        id: cache-deps
-        uses: actions/cache@v4
+      - name: Restore deps
+        uses: actions/cache/restore@v4
         env:
           cache-name: cache-elixir-deps
         with:
-          path: deps
+          path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
 
-      # Define how to cache the `_build` directory. After the first run,
-      # this speeds up tests runs a lot. This includes not re-compiling our
-      # project's downloaded deps every run.
-      - name: Cache compiled build
-        id: cache-build
-        uses: actions/cache@v4
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Restore compiled build
+        uses: actions/cache/restore@v4
         env:
           cache-name: cache-compiled-build
         with:
-          path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          path: site/_build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-${{ hashFiles('site/lib/**/*.ex') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-mix-
-
-      # Download project dependencies. If unchanged, uses
-      # the cached version.
-      - name: Install dependencies
-        run: mix deps.get
+            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
+            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-
 
       - name: Check formatting
         run: mix format --check-formatted
@@ -178,7 +157,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: false
     name: Test
-    needs: build
+    needs: setup
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -191,37 +170,30 @@ jobs:
           version-type: strict
           version-file: site/.tool-versions
 
-      # Define how to cache deps. Restores existing cache if present.
-      - name: Cache deps
-        id: cache-deps
-        uses: actions/cache@v4
+      - name: Restore deps
+        uses: actions/cache/restore@v4
         env:
           cache-name: cache-elixir-deps
         with:
-          path: deps
+          path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-mix-${{ env.cache-name }}-
 
-      # Download project dependencies. If unchanged, uses
-      # the cached version.
       - name: Install dependencies
         run: mix deps.get
 
-      # Define how to cache the `_build` directory. After the first run,
-      # this speeds up tests runs a lot. This includes not re-compiling our
-      # project's downloaded deps every run.
-      - name: Cache compiled build
-        id: cache-build
-        uses: actions/cache@v4
+      - name: Restore compiled build
+        uses: actions/cache/restore@v4
         env:
           cache-name: cache-compiled-build
         with:
-          path: _build
-          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          path: site/_build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-${{ hashFiles('site/lib/**/*.ex') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
+            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-
 
       - name: Run tests
         run: mix test
