@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   setup:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     name: Setup
     steps:
       - name: Checkout code
@@ -57,7 +57,7 @@ jobs:
             ${{ runner.os }}-mix-${{ env.cache-name }}-
 
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     name: Build
     needs: setup
     steps:
@@ -102,7 +102,7 @@ jobs:
             ${{ runner.os }}-build-
 
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     name: Lint
     needs: setup
     steps:
@@ -154,7 +154,7 @@ jobs:
           config: _typos.toml
 
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     if: false
     name: Test
     needs: setup
