@@ -155,9 +155,22 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    if: false
     name: Test
-    needs: setup
+    needs: build
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USERNAME: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rom_to_the_com_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -194,6 +207,9 @@ jobs:
             ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
             ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
             ${{ runner.os }}-build-
+
+      - name: Setup database
+        run: mix ecto.create && mix ecto.migrate
 
       - name: Run tests
         run: mix test

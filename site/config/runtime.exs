@@ -25,9 +25,17 @@ end
 
 config :rom_to_the_com, RomToTheCom.Plausible, data_domain: nil
 
-config :rom_to_the_com, RomToTheComWeb.Pushover,
-  pushover_api_key: env!("PUSHOVER_API_KEY", :string!),
-  pushover_user_key: env!("PUSHOVER_USER_KEY", :string!)
+if config_env() in [:prod, :dev] do
+  config :rom_to_the_com, RomToTheComWeb.Pushover,
+    pushover_api_key: env!("PUSHOVER_API_KEY", :string!),
+    pushover_user_key: env!("PUSHOVER_USER_KEY", :string!)
+end
+
+if config_env() == :test do
+  config :rom_to_the_com, RomToTheComWeb.Pushover,
+    pushover_api_key: "DUMMY_API_KEY",
+    pushover_user_key: "DUMMY_USER_KEY"
+end
 
 if config_env() == :prod do
   database_url =
