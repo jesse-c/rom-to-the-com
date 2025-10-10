@@ -75,7 +75,15 @@ if config_env() == :prod do
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-    socket_options: maybe_ipv6
+    socket_options: maybe_ipv6,
+    queue_target: 50,
+    queue_interval: 1000,
+    timeout: 15_000,
+    connect_timeout: 15_000,
+    pool_timeout: 5_000,
+    backoff_type: :exp,
+    max_restarts: 3,
+    max_seconds: 5
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
