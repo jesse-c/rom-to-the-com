@@ -14,6 +14,95 @@
     </p>
   </div>
 
+  <div class="w-full mb-8 text-sm">
+    <div class="w-full mb-2 grid grid-cols-3 items-center font-bold">
+      <span class="text-left">99% Romantic</span>
+      <div class="text-center">
+        <button
+          phx-click="feeling_lucky"
+          class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
+        >
+          I'm feeling lucky!
+        </button>
+      </div>
+      <span class="text-right">99% Comedy</span>
+    </div>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      value={"#{@pos}"}
+      step="5"
+      class="w-full"
+      id="rom-com-slider"
+      phx-hook="Slider"
+    />
+    <div class="text-center mt-2 text-sm" id="slider-value">
+      <div>{@rom}%/{@com}%</div>
+      <div>(±5)</div>
+    </div>
+  </div>
+
+  <div class="w-full mb-4">
+    <form phx-change="search" class="flex items-center">
+      <div class="w-full">
+        <.input
+          type="text"
+          name="search"
+          value={@search}
+          placeholder="Search films..."
+          class="rounded-sm text-black text-sm"
+          autocomplete="off"
+          list="film-titles"
+        />
+      </div>
+      <datalist id="film-titles">
+        <%= for film <- @all_films do %>
+          <option value={film.title} />
+        <% end %>
+      </datalist>
+    </form>
+  </div>
+
+  <table class="w-full mb-8 text-sm">
+    <thead>
+      <tr class="bg-black dark:bg-white text-white dark:text-black p-2">
+        <th class="w-4/6 text-left font-normal underline p-2">Title</th>
+        <th class="w-1/6 text-left font-normal underline p-2">Year</th>
+        <th class="w-1/6 text-left font-normal underline p-2">Rank</th>
+        <th class="w-1/6 text-left font-normal underline p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-dashed divide-black">
+      <%= if Enum.empty?(@filtered_films) do %>
+        <tr>
+          <td colspan="4" class="text-center py-2">No films found for that ranking.</td>
+        </tr>
+      <% else %>
+        <tr :for={film <- @filtered_films} :key={film.id} class="py-2">
+          <%= if is_nil(film.poster) do %>
+            <td class="w-4/6 py-2">{film.title}</td>
+          <% else %>
+            <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}>
+              {film.title}
+            </td>
+          <% end %>
+          <td class="w-1/6 py-2">{film.year}</td>
+          <td class="w-1/6 py-2">{film.rank.rom}%/{film.rank.com}%</td>
+          <td class="w-1/6 py-2">
+            <button
+              phx-click="edit_open"
+              phx-value-id={film.id}
+              class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
+            >
+              Edit
+            </button>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
   <details
     class="font-normal mb-8 p-3 font-bold rounded-sm border border-black dark:border-white"
     {if @details_open, do: [open: "true"], else: []}
@@ -126,95 +215,6 @@
       </button>
     </div>
   <% end %>
-
-  <div class="w-full mb-8 text-sm">
-    <div class="w-full mb-2 grid grid-cols-3 items-center font-bold">
-      <span class="text-left">99% Romantic</span>
-      <div class="text-center">
-        <button
-          phx-click="feeling_lucky"
-          class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
-        >
-          I'm feeling lucky!
-        </button>
-      </div>
-      <span class="text-right">99% Comedy</span>
-    </div>
-    <input
-      type="range"
-      min="0"
-      max="100"
-      value={"#{@pos}"}
-      step="5"
-      class="w-full"
-      id="rom-com-slider"
-      phx-hook="Slider"
-    />
-    <div class="text-center mt-2 text-sm" id="slider-value">
-      <div>{@rom}%/{@com}%</div>
-      <div>(±5)</div>
-    </div>
-  </div>
-
-  <div class="w-full mb-4">
-    <form phx-change="search" class="flex items-center">
-      <div class="w-full">
-        <.input
-          type="text"
-          name="search"
-          value={@search}
-          placeholder="Search films..."
-          class="rounded-sm text-black text-sm"
-          autocomplete="off"
-          list="film-titles"
-        />
-      </div>
-      <datalist id="film-titles">
-        <%= for film <- @all_films do %>
-          <option value={film.title} />
-        <% end %>
-      </datalist>
-    </form>
-  </div>
-
-  <table class="w-full mb-8 text-sm">
-    <thead>
-      <tr class="bg-black dark:bg-white text-white dark:text-black p-2">
-        <th class="w-4/6 text-left font-normal underline p-2">Title</th>
-        <th class="w-1/6 text-left font-normal underline p-2">Year</th>
-        <th class="w-1/6 text-left font-normal underline p-2">Rank</th>
-        <th class="w-1/6 text-left font-normal underline p-2">Actions</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-dashed divide-black">
-      <%= if Enum.empty?(@filtered_films) do %>
-        <tr>
-          <td colspan="4" class="text-center py-2">No films found for that ranking.</td>
-        </tr>
-      <% else %>
-        <tr :for={film <- @filtered_films} :key={film.id} class="py-2">
-          <%= if is_nil(film.poster) do %>
-            <td class="w-4/6 py-2">{film.title}</td>
-          <% else %>
-            <td class="w-4/6 py-2 movie-title" style={"--poster-url: url('#{film.poster}');"}>
-              {film.title}
-            </td>
-          <% end %>
-          <td class="w-1/6 py-2">{film.year}</td>
-          <td class="w-1/6 py-2">{film.rank.rom}%/{film.rank.com}%</td>
-          <td class="w-1/6 py-2">
-            <button
-              phx-click="edit_open"
-              phx-value-id={film.id}
-              class="font-normal text-brand hover:text-brand-dark dark:text-brand dark:hover:text-brand-dark underline transition-colors duration-200"
-            >
-              Edit
-            </button>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
 
   <footer>
     <hr class="mb-8 border-black dark:border-white" />
