@@ -56,6 +56,7 @@ defmodule RomToTheCom.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.26.2"},
       {:jason, "~> 1.2"},
+      {:hackney, "~> 1.8"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:nimble_csv, "~> 1.1"},
@@ -63,7 +64,14 @@ defmodule RomToTheCom.MixProject do
       {:req, "~> 0.5.0"},
       {:dotenvy, "~> 1.1.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:lazy_html, ">= 0.1.7", only: :test}
+      {:lazy_html, ">= 0.1.7", only: :test},
+      {:sentry, "~> 11.0.4"},
+      {:opentelemetry, "~> 1.5"},
+      {:opentelemetry_api, "~> 1.4"},
+      {:opentelemetry_exporter, "~> 1.0"},
+      {:opentelemetry_semantic_conventions, "~> 1.27"},
+      {:opentelemetry_phoenix, "~> 2.0"},
+      {:opentelemetry_bandit, "~> 0.1"}
     ]
   end
 
