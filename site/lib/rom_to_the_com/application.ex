@@ -7,6 +7,13 @@ defmodule RomToTheCom.Application do
 
   @impl true
   def start(_type, _args) do
+    if Application.get_env(:rom_to_the_com, :enable_sentry, false) do
+      Logger.add_handlers(:rom_to_the_com)
+
+      OpentelemetryBandit.setup()
+      OpentelemetryPhoenix.setup(adapter: :bandit)
+    end
+
     children = [
       RomToTheComWeb.Telemetry,
       RomToTheCom.Repo,

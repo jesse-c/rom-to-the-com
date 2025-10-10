@@ -17,6 +17,8 @@ defmodule RomToTheComWeb do
   those modules here.
   """
 
+  @enable_sentry Application.compile_env(:rom_to_the_com, :enable_sentry, false)
+
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
@@ -53,6 +55,10 @@ defmodule RomToTheComWeb do
     quote do
       use Phoenix.LiveView,
         layout: {RomToTheComWeb.Layouts, :app}
+
+      if unquote(@enable_sentry) do
+        on_mount Sentry.LiveViewHook
+      end
 
       unquote(html_helpers())
     end

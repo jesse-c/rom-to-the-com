@@ -38,6 +38,30 @@ if config_env() == :test do
 end
 
 if config_env() == :prod do
+  config :sentry,
+    dsn: env!("SENTRY_DSN", :string!),
+    environment_name: :prod,
+    traces_sample_rate: 1.0,
+    integrations: [
+      telemetry: [
+        report_handler_failures: true
+      ]
+    ]
+
+  config :rom_to_the_com, :logger, [
+    {:handler, :my_sentry_handler, Sentry.LoggerHandler,
+     %{
+       config: %{
+         capture_log_messages: true,
+         level: :error,
+         metadata: [:file, :line]
+       }
+     }}
+  ]
+
+  config :opentelemetry, span_processor: {Sentry.OpenTelemetry.SpanProcessor, []}
+  config :opentelemetry, sampler: {Sentry.OpenTelemetry.Sampler, []}
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

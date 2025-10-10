@@ -11,5 +11,11 @@ config :rom_to_the_com, RomToTheComWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: "PHX_LOG_LEVEL" |> System.get_env("info") |> String.to_atom()
 
+config :rom_to_the_com, enable_sentry: true
+
+config :sentry,
+  enable_source_code_context: true,
+  root_source_code_paths: [File.cwd!()]
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

@@ -1,4 +1,8 @@
 defmodule RomToTheComWeb.Endpoint do
+  if Application.compile_env(:rom_to_the_com, :enable_sentry, false) do
+    use Sentry.PlugCapture
+  end
+
   use Phoenix.Endpoint, otp_app: :rom_to_the_com
 
   # The session will be stored in the cookie and signed,
@@ -24,6 +28,10 @@ defmodule RomToTheComWeb.Endpoint do
     from: :rom_to_the_com,
     gzip: false,
     only: RomToTheComWeb.static_paths()
+
+  if Application.compile_env(:rom_to_the_com, :enable_sentry, false) do
+    plug Sentry.PlugContext
+  end
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
