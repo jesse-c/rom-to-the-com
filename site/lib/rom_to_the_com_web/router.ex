@@ -25,15 +25,12 @@ defmodule RomToTheComWeb.Router do
   scope "/", RomToTheComWeb do
     pipe_through(:browser)
 
+    get "/healthz", HealthController, :healthz
+
     live_session :default do
       live("/", Live.Index)
     end
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", RomToTheComWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:rom_to_the_com, :dev_routes) do
