@@ -17,5 +17,7 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()]
 
+config :opentelemetry, traces_exporter: :none
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
