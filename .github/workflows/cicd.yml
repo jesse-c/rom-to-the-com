@@ -33,7 +33,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         env:
           cache-name: cache-elixir-deps
         with:
@@ -47,7 +47,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-elixir-deps
         with:
@@ -73,7 +73,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         env:
           cache-name: cache-elixir-deps
         with:
@@ -90,7 +90,7 @@ jobs:
 
       - name: Cache compiled build
         id: cache-build
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-compiled-build
         with:
@@ -118,7 +118,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         env:
           cache-name: cache-elixir-deps
         with:
@@ -131,7 +131,7 @@ jobs:
         run: mix deps.get
 
       - name: Restore compiled build
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         env:
           cache-name: cache-compiled-build
         with:
@@ -184,7 +184,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         env:
           cache-name: cache-elixir-deps
         with:
@@ -197,7 +197,7 @@ jobs:
         run: mix deps.get
 
       - name: Restore compiled build
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         env:
           cache-name: cache-compiled-build
         with:
