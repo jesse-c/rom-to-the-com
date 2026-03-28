@@ -41,6 +41,7 @@ if config_env() == :prod do
   config :sentry,
     dsn: env!("SENTRY_DSN", :string!),
     environment_name: :prod,
+    release: System.get_env("RAILWAY_GIT_COMMIT_SHA"),
     traces_sample_rate: 1.0,
     integrations: [
       telemetry: [
