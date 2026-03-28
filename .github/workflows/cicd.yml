@@ -148,6 +148,9 @@ jobs:
       - name: Check code analysis
         run: mix credo --all
 
+      - name: Check for duplicate film UUIDs
+        run: mix check_duplicates
+
       - name: Check spelling
         uses: crate-ci/typos@master
         with:
