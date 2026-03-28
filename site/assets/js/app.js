@@ -23,10 +23,38 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { hooks as colocatedHooks } from "phoenix-colocated/rom_to_the_com";
 
+const trackEvent = (name, props = {}) => {
+  window.plausible?.(name, { props });
+};
+
 let Hooks = {};
+
+Hooks.Analytics = {
+  mounted() {
+    this.handleEvent("track-event", ({ name, props }) => {
+      trackEvent(name, props ?? {});
+    });
+  },
+};
+
+Hooks.SearchInput = {
+  mounted() {
+    let debounceTimer;
+    this.el.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (this.el.value.length > 0) {
+          trackEvent("Film search");
+        }
+      }, 800);
+    });
+  },
+};
 
 Hooks.Slider = {
   mounted() {
+    let debounceTimer;
+
     this.el.addEventListener("input", (e) => {
       let comPercentage = parseInt(this.el.value);
       let romPercentage = 100 - comPercentage;
@@ -49,6 +77,11 @@ Hooks.Slider = {
         displayCom: displayCom,
         pos: parseInt(this.el.value),
       });
+
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        trackEvent("Slider change", { romance: displayRom, comedy: displayCom });
+      }, 1000);
     });
   },
 };

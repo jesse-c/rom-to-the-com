@@ -93,7 +93,12 @@ defmodule RomToTheComWeb.Live.Index do
   end
 
   def handle_event("toggle_details", _params, socket) do
-    {:noreply, assign(socket, details_open: not socket.assigns.details_open)}
+    socket =
+      socket
+      |> push_event("track-event", %{name: "Suggestion form toggle"})
+      |> assign(details_open: not socket.assigns.details_open)
+
+    {:noreply, socket}
   end
 
   def handle_event("feeling_lucky", _params, socket) do
@@ -128,8 +133,9 @@ defmodule RomToTheComWeb.Live.Index do
 
     {
       :noreply,
-      assign(
-        socket,
+      socket
+      |> push_event("track-event", %{name: "Feeling lucky"})
+      |> assign(
         filtered_films: filtered_films,
         rom: rom,
         com: com,
@@ -203,6 +209,7 @@ defmodule RomToTheComWeb.Live.Index do
             socket =
               socket
               |> put_flash(:info, "Suggestion submitted!")
+              |> push_event("track-event", %{name: "Submit suggestion"})
               |> assign(
                 suggestion:
                   to_form(
@@ -242,8 +249,9 @@ defmodule RomToTheComWeb.Live.Index do
 
     {
       :noreply,
-      assign(
-        socket,
+      socket
+      |> push_event("track-event", %{name: "Edit film"})
+      |> assign(
         edit: %{
           film: film,
           form: form
@@ -303,6 +311,7 @@ defmodule RomToTheComWeb.Live.Index do
             socket =
               socket
               |> put_flash(:info, "Edit submitted!")
+              |> push_event("track-event", %{name: "Save edit"})
               |> assign(edit: nil)
 
             {:noreply, socket}
@@ -348,8 +357,9 @@ defmodule RomToTheComWeb.Live.Index do
 
     {
       :noreply,
-      assign(
-        socket,
+      socket
+      |> push_event("track-event", %{name: "Reset edit"})
+      |> assign(
         edit: %{
           film: socket.assigns.edit.film,
           form: form
@@ -361,10 +371,9 @@ defmodule RomToTheComWeb.Live.Index do
   def handle_event("edit_cancel", _params, socket) do
     {
       :noreply,
-      assign(
-        socket,
-        edit: nil
-      )
+      socket
+      |> push_event("track-event", %{name: "Cancel edit"})
+      |> assign(edit: nil)
     }
   end
 
