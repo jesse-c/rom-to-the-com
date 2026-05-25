@@ -17,7 +17,7 @@
       {assigns[:page_title]}
     </.live_title>
     <script type="application/ld+json">
-      <%= RomToTheComWeb.Layouts.schema_markup() %>
+      <%= raw(RomToTheComWeb.Layouts.schema_markup()) %>
     </script>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
