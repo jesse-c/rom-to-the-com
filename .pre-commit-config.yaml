@@ -1,0 +1,16 @@
+repos:
+  - repo: local
+    hooks:
+      - id: mix-format
+        name: Check formatting
+        language: system
+        entry: bash -c 'cd site && mix format --check-formatted'
+        pass_filenames: false
+        files: \.(ex|exs|heex)$
+
+      - id: mix-credo
+        name: Check code analysis
+        language: system
+        entry: bash -c 'cd site && mix credo --all'
+        pass_filenames: false
+        files: \.(ex|exs|heex)$
