@@ -8,7 +8,21 @@ defmodule RomToTheComWeb.Router do
     plug :put_root_layout, html: {RomToTheComWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :redirect_www
     plug :assign_ip_to_session
+  end
+
+  def redirect_www(conn, _opts) do
+    if String.starts_with?(conn.host, "www.") do
+      conn
+    else
+      url = "https://www.#{conn.host}#{conn.request_path}"
+      url = if conn.query_string != "", do: "#{url}?#{conn.query_string}", else: url
+
+      conn
+      |> Phoenix.Controller.redirect(external: url)
+      |> Plug.Conn.halt()
+    end
   end
 
   # session: %{"_csrf_token" => "5CjLB4-ZT3EVDWTV-0b91AJa", "client_ip" => "127.0.0.1"}
@@ -23,9 +37,11 @@ defmodule RomToTheComWeb.Router do
   end
 
   scope "/", RomToTheComWeb do
-    pipe_through(:browser)
-
     get "/healthz", HealthController, :healthz
+  end
+
+  scope "/", RomToTheComWeb do
+    pipe_through(:browser)
 
     live_session :default do
       live("/", Live.Index)
