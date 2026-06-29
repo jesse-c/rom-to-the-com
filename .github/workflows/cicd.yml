@@ -33,7 +33,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-elixir-deps-v2
         with:
@@ -48,7 +48,7 @@ jobs:
       # Save only: restoring here would overwrite the dependencies just fetched.
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         env:
           cache-name: cache-elixir-deps-v2
         with:
@@ -72,7 +72,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-elixir-deps-v2
         with:
@@ -90,7 +90,7 @@ jobs:
       # Share this commit's build without restoring stale files over it.
       - name: Cache compiled build
         id: cache-build
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         env:
           cache-name: cache-compiled-build
         with:
@@ -114,7 +114,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-elixir-deps-v2
         with:
@@ -127,7 +127,7 @@ jobs:
         run: mix deps.get
 
       - name: Restore compiled build
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-compiled-build
         with:
@@ -179,7 +179,7 @@ jobs:
           version-file: site/.tool-versions
 
       - name: Restore deps
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-elixir-deps-v2
         with:
@@ -192,7 +192,7 @@ jobs:
         run: mix deps.get
 
       - name: Restore compiled build
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-compiled-build
         with:
