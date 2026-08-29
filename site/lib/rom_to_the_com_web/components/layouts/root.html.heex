@@ -7,15 +7,26 @@
     <meta name="description" content={RomToTheComWeb.Layouts.description()} />
     <link rel="icon" sizes="any" type="image/x-icon" href="/favicon.ico" />
     <link rel="canonical" href={RomToTheComWeb.Layouts.canonical_url()} />
-    <meta property="og:title" content={"Rom-to-the-Com · #{assigns[:page_title]}"} />
+    <meta
+      property="og:title"
+      content={
+        if assigns[:page_title],
+          do: "Rom-to-the-Com · #{assigns[:page_title]}",
+          else: "Rom-to-the-Com"
+      }
+    />
     <meta property="og:description" content={RomToTheComWeb.Layouts.description()} />
     <meta property="og:url" content={RomToTheComWeb.Layouts.canonical_url()} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Rom-to-the-Com" />
     <meta name="twitter:card" content="summary" />
-    <.live_title prefix="Rom-to-the-Com · ">
-      {assigns[:page_title]}
-    </.live_title>
+    <%= if assigns[:page_title] do %>
+      <.live_title prefix="Rom-to-the-Com · ">
+        {assigns[:page_title]}
+      </.live_title>
+    <% else %>
+      <.live_title>Rom-to-the-Com</.live_title>
+    <% end %>
     <script type="application/ld+json">
       <%= raw(RomToTheComWeb.Layouts.schema_markup()) %>
     </script>

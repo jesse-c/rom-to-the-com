@@ -34,7 +34,6 @@ defmodule RomToTheComWeb.Live.Index do
         com: com,
         pos: pos,
         search: search,
-        page_title: "Index",
         suggestion:
           to_form(
             Ecto.Changeset.change(%Suggestion{
