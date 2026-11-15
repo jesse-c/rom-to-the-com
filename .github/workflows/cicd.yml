@@ -35,7 +35,7 @@ jobs:
       - name: Restore deps
         uses: actions/cache/restore@v5
         env:
-          cache-name: cache-elixir-deps
+          cache-name: cache-elixir-deps-v2
         with:
           path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
@@ -45,16 +45,15 @@ jobs:
       - name: Install dependencies
         run: mix deps.get
 
+      # Save only: restoring here would overwrite the dependencies just fetched.
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache@v5
+        uses: actions/cache/save@v5
         env:
-          cache-name: cache-elixir-deps
+          cache-name: cache-elixir-deps-v2
         with:
           path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mix-${{ env.cache-name }}-
 
   build:
     runs-on: ubuntu-latest
@@ -75,7 +74,7 @@ jobs:
       - name: Restore deps
         uses: actions/cache/restore@v5
         env:
-          cache-name: cache-elixir-deps
+          cache-name: cache-elixir-deps-v2
         with:
           path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
@@ -88,18 +87,15 @@ jobs:
       - name: Compiles without warnings
         run: mix compile --warnings-as-errors
 
+      # Share this commit's build without restoring stale files over it.
       - name: Cache compiled build
         id: cache-build
-        uses: actions/cache@v5
+        uses: actions/cache/save@v5
         env:
           cache-name: cache-compiled-build
         with:
           path: site/_build
-          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-${{ hashFiles('site/lib/**/*.ex') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
-            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
-            ${{ runner.os }}-build-
+          key: ${{ runner.os }}-build-v2-${{ github.sha }}
 
   lint:
     runs-on: ubuntu-latest
@@ -120,7 +116,7 @@ jobs:
       - name: Restore deps
         uses: actions/cache/restore@v5
         env:
-          cache-name: cache-elixir-deps
+          cache-name: cache-elixir-deps-v2
         with:
           path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
@@ -136,11 +132,7 @@ jobs:
           cache-name: cache-compiled-build
         with:
           path: site/_build
-          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-${{ hashFiles('site/lib/**/*.ex') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
-            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
-            ${{ runner.os }}-build-
+          key: ${{ runner.os }}-build-v2-${{ github.sha }}
 
       - name: Check formatting
         run: mix format --check-formatted
@@ -189,7 +181,7 @@ jobs:
       - name: Restore deps
         uses: actions/cache/restore@v5
         env:
-          cache-name: cache-elixir-deps
+          cache-name: cache-elixir-deps-v2
         with:
           path: site/deps
           key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
@@ -205,11 +197,7 @@ jobs:
           cache-name: cache-compiled-build
         with:
           path: site/_build
-          key: ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-${{ hashFiles('site/lib/**/*.ex') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('site/mix.exs') }}-
-            ${{ runner.os }}-build-${{ hashFiles('**/mix.lock') }}-
-            ${{ runner.os }}-build-
+          key: ${{ runner.os }}-build-v2-${{ github.sha }}
 
       - name: Setup database
         run: mix ecto.create && mix ecto.migrate
